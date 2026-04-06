@@ -137,5 +137,5 @@ Disponible en: `http://localhost:8080/swagger-ui.html`
 
 ---
 
-**Autor**: Rikardo Hancel  
+**Autor**: Hancel Cardenas
 **Última actualización**: Abril 2026
