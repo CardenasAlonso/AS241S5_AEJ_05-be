@@ -1,3 +1,29 @@
+server:
+  port: 8080
+
 spring:
   application:
     name: vallegrande
+  data:
+    mongodb:
+      uri: mongodb://hancelcardenastrujillo_db_user:Vallegrande2026@ac-21urkro-shard-00-00.k393i5v.mongodb.net:27017,ac-21urkro-shard-00-01.k393i5v.mongodb.net:27017,ac-21urkro-shard-00-02.k393i5v.mongodb.net:27017/?ssl=true&replicaSet=atlas-e5pqvc-shard-0&authSource=admin&appName=Cluster0
+      database: 05_hancel_cardenas
+  
+springdoc:
+  api-docs:
+    enabled: true
+    path: /api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+
+apis:
+  zerobounce:
+    url-validate-email: https://api.zerobounce.net/v2
+    key: ${ZEROBOUNCE_KEY:d1a5489ca32848c69afc74eb5347e0d9}
+  elevenlabs:
+    url-text-to-speech: https://api.elevenlabs.io/v1
+    url-sound-effects: https://elevenlabs-sound-effects.p.rapidapi.com/generate-sound
+    key: sk_845c326f9c379a510933eb84d526557bdcb0c04db30c5b26
+    rapidapi-key: 8f57d59591msh492f19d2ce97845p1c4e68jsne62a5bda5d57
+    rapidapi-host: elevenlabs-sound-effects.p.rapidapi.com
