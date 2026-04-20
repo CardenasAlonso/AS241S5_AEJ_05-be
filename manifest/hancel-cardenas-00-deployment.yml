@@ -1,0 +1,23 @@
+# kubectl apply -f hancel-cardenas-00-deployment.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hancel-cardenas-00-deployment
+  namespace: hancel-cardenas-00-namespace
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: hancel-cardenas-00-deployment        # Debe coincidir con las etiquetas del Service
+  template:
+    metadata:
+      labels:
+        app: hancel-cardenas-00-deployment      # Debe coincidir con las etiquetas del Service
+    spec:
+      containers:
+      - name: hancel-cardenas-00-container
+        image: cardenastrujilloalonso/mi-primer-action:latest   # Reemplaza con tu imagen Docker Hub
+        imagePullPolicy: IfNotPresent        # Evitar traer siempre la última versión si hay una actual
+        envFrom:
+        - secretRef:
+            name: hancel-cardenas-00-secret  # Esto cargará todos los valores como variables de entorno

@@ -1,0 +1,6 @@
+# kubectl create namespace hancel-cardenas-00-namespace (COMANDO)
+# kubectl apply -f hancel-cardenas-00-namespace.yml (yml)
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: hancel-cardenas-00-namespace
