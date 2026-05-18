@@ -12,6 +12,7 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/api/v1/elevenlabs")
+@CrossOrigin(origins = "*")
 public class ElevenLabsController {
 
     private final AiIntegrationService aiService;

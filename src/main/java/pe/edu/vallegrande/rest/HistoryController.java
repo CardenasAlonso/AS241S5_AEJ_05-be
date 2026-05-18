@@ -8,7 +8,7 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/api/v1/responses")
-@CrossOrigin(origins = "*") // Importante para que Angular no de error
+@CrossOrigin(origins = "*")
 public class HistoryController {
 
     private final ApiRepository apiRepository;
