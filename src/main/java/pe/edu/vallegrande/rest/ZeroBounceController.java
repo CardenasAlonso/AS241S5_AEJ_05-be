@@ -7,6 +7,7 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/api/v1/zerobounce")
+@CrossOrigin(origins = "*")
 public class ZeroBounceController {
 
     private final AiIntegrationService aiService;
