@@ -1,5 +1,5 @@
 # Etapa 1: Construcción (Build con Caché de Dependencias)
-FROM maven:3.9.6-amazoncorretto-17-alpine AS builder
+FROM maven:3.9.6-eclipse-temurin-17-alpine AS builder
 WORKDIR /app
 
 # 1.1 Copiar solo el POM para descargar dependencias primero y guardarlas en la caché de capas de Docker
