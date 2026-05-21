@@ -44,6 +44,31 @@
 			<version>3.18.0</version>
 		</dependency>
 		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-codec</artifactId>
+			<version>4.1.133.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-codec-dns</artifactId>
+			<version>4.1.133.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-codec-http</artifactId>
+			<version>4.1.133.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-codec-http2</artifactId>
+			<version>4.1.133.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-handler-proxy</artifactId>
+			<version>4.1.133.Final</version>
+		</dependency>
+		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webflux-ui</artifactId>
 			<version>2.5.0</version> 
