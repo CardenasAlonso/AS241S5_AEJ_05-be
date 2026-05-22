@@ -67,7 +67,7 @@ jobs:
         run: |
           mvn clean verify sonar:sonar \
             -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} \
-            -Dsonar.organization=cardenas-trujillo-alonso \
+            -Dsonar.organization=cardenasalonso \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
