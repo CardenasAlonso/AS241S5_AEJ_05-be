@@ -8,6 +8,7 @@ variables:
   DOCKER_TLS_CERTDIR: ""
   SONAR_HOST_URL: "https://sonarcloud.io"
   SONAR_ORGANIZATION: "cardenas-trujillo-alonso"
+  SONAR_PROJECT_KEY: "CardenasAlonso_AS241S5_AEJ_05-be"
 
 stages:
   - test
@@ -35,7 +36,7 @@ sonarqube-analyze:
   image: maven:3.9-eclipse-temurin-17
   script:
     - mvn clean verify sonar:sonar 
-      -Dsonar.projectKey=AS241S5_AEJ_05-be
+      -Dsonar.projectKey=$SONAR_PROJECT_KEY
       -Dsonar.organization=$SONAR_ORGANIZATION
       -Dsonar.host.url=$SONAR_HOST_URL
       -Dsonar.login=$SONAR_TOKEN
