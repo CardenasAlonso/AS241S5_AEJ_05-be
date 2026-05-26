@@ -10,20 +10,20 @@ on:
       - main
       - develop
   schedule:
-    # Ejecutar todos los días a las 8:00 AM hora Perú (UTC-5) → 1:00 PM UTC
+    # Ejecuta todos los días a las 8:00 AM hora Perú (UTC-5)
     - cron: '0 13 * * *'
-  workflow_dispatch:  # Permite ejecución manual desde GitHub Actions UI
+  workflow_dispatch:
 
 jobs:
-  # Job 1: Tests unitarios
-  test:
-    name: Run Unit Tests
+  # Trabajo 1: Verifica el código (Pruebas + SonarCloud)
+  build-and-analyze:
+    name: Test & SonarCloud Analysis
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Necesario para SonarCloud
+          fetch-depth: 0 # Requerido por SonarCloud
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
@@ -32,8 +32,16 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Run Tests with Maven
-        run: mvn clean test
+      # Executa pruebas, genera reportes y los envía a SonarCloud de un solo golpe
+      - name: Build, Test and Analyze
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          mvn clean verify sonar:sonar \
+            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} \
+            -Dsonar.organization=cardenastrujilloalonso \
+            -Dsonar.host.url=https://sonarcloud.io
 
       - name: Upload Test Results
         if: always()
@@ -42,40 +50,12 @@ jobs:
           name: test-results
           path: target/surefire-reports/
 
-  # Job 2: Análisis de código con SonarCloud
-  sonarcloud:
-    name: SonarCloud Analysis
-    runs-on: ubuntu-latest
-    needs: test
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0  # Necesario para SonarCloud
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-          cache: maven
-
-      - name: SonarCloud Scan
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: |
-          mvn clean verify sonar:sonar \
-            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} \
-            -Dsonar.organization=cardenasalonso \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-
-  # Job 3: Build y Push Docker
+  # Trabajo 2: Construcción y despliegue en Docker Hub
   dockerhub:
     name: Build and Push Docker Image
     runs-on: ubuntu-latest
-    needs: sonarcloud
+    needs: build-and-analyze
+    # Se ejecuta solo en push a las ramas principales y si el análisis previo pasó exitosamente
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
     steps:
       - name: Checkout Repository
@@ -87,11 +67,11 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME_HANCEL }}
           password: ${{ secrets.DOCKERHUB_TOKEN_HANCEL }}
 
-      - name: Build and Push Docker Image to Docker Hub
+      - name: Build and Push Docker Image
         uses: docker/build-push-action@v4
         with:
           context: .
-          dockerfile: Dockerfile
+          file: ./Dockerfile
           push: true
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME_HANCEL }}/as241s5_aej_05-be:latest
