@@ -1,0 +1,67 @@
+image: docker:cli
+
+services:
+  - docker:dind
+
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
+  SONAR_HOST_URL: "https://sonarcloud.io"
+  SONAR_ORGANIZATION: "cardenasalonso"
+  SONAR_PROJECT_KEY: "CardenasAlonso_AS241S5_AEJ_05-be"
+
+stages:
+  - test
+  - analyze
+  - publish
+
+# Etapa 1: Ejecutar tests unitarios
+test:
+  stage: test
+  image: maven:3.9-eclipse-temurin-17
+  script:
+    - mvn clean test
+  artifacts:
+    reports:
+      junit: target/surefire-reports/TEST-*.xml
+    paths:
+      - target/
+    expire_in: 1 day
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "main"
+
+# Etapa 2: Análisis con SonarQube (SonarCloud)
+sonarqube-analyze:
+  stage: analyze
+  image: maven:3.9-eclipse-temurin-17
+  script:
+    - mvn clean verify sonar:sonar 
+      -Dsonar.projectKey=$SONAR_PROJECT_KEY
+      -Dsonar.organization=$SONAR_ORGANIZATION
+      -Dsonar.host.url=$SONAR_HOST_URL
+      -Dsonar.login=$SONAR_TOKEN
+      -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+  dependencies:
+    - test
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "main"
+  allow_failure: true  # No bloquea el pipeline si SonarQube falla
+
+# Etapa 3: Build y Push a Docker Hub
+build-and-push-docker:
+  stage: publish
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop"
+    - if: $CI_COMMIT_BRANCH == "main"
+  
+  before_script:
+    - echo "$DOCKERHUB_TOKEN_HANCEL" | docker login -u "$DOCKERHUB_USERNAME_HANCEL" --password-stdin
+  
+  script:
+    - docker build -t $DOCKERHUB_USERNAME_HANCEL/as241s5-aej-05-be:latest -t $DOCKERHUB_USERNAME_HANCEL/as241s5-aej-05-be:$CI_COMMIT_SHORT_SHA .
+    
+    - docker push $DOCKERHUB_USERNAME_HANCEL/as241s5-aej-05-be:latest
+    - docker push $DOCKERHUB_USERNAME_HANCEL/as241s5-aej-05-be:$CI_COMMIT_SHORT_SHA
+  dependencies: []
+  needs:
+    - sonarqube-analyze
